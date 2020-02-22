@@ -16,6 +16,7 @@ addons:
 env:
   matrix:
   - NODE_VERSION=8.16.1
+  - NODE_VERSION=12
 matrix:
   allow_failures:
   - os: osx
