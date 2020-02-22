@@ -36,7 +36,8 @@ install:
 
 script:
 - npm test
-- gulp build
+- npm run build
+- npm run ci
 
 cache:
   directories:
