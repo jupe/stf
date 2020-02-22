@@ -19,7 +19,7 @@ var karmaConfig = '/res/test/karma.conf.js'
 var stream = require('stream')
 var run = require('gulp-run')
 
-gulp.task('jsonlint', gulp.series(async function () {
+gulp.task('jsonlint', gulp.series(async function() {
   return gulp.src([
     '.bowerrc'
     , '.yo-rc.json'
@@ -31,7 +31,7 @@ gulp.task('jsonlint', gulp.series(async function () {
 
 // Try to use eslint-cli directly instead of eslint-gulp
 // since it doesn't support cache yet
-gulp.task('eslint', gulp.series(async function () {
+gulp.task('eslint', gulp.series(async function() {
   return gulp.src([
     'lib/**/*.js'
     , 'res/**/*.js'
@@ -49,7 +49,7 @@ gulp.task('eslint', gulp.series(async function () {
     .pipe(eslint.failAfterError())
 }))
 
-gulp.task('eslint-cli', gulp.series(async function (done) {
+gulp.task('eslint-cli', gulp.series(async function(done) {
   var cli = new EslintCLIEngine({
     cache: true
     , fix: false
@@ -76,19 +76,19 @@ gulp.task('eslint-cli', gulp.series(async function (done) {
 }))
 
 
-gulp.task('run:checkversion', gulp.series(async function () {
+gulp.task('run:checkversion', gulp.series(async function() {
   gutil.log('Checking STF version...')
   return run('./bin/stf -V').exec()
 }))
 
-gulp.task('karma_ci', gulp.series(async function (done) {
+gulp.task('karma_ci', gulp.series(async function(done) {
   karma.start({
     configFile: path.join(__dirname, karmaConfig)
     , singleRun: true
   }, done)
 }))
 
-gulp.task('karma', gulp.series(async function (done) {
+gulp.task('karma', gulp.series(async function(done) {
   karma.start({
     configFile: path.join(__dirname, karmaConfig)
   }, done)
@@ -104,7 +104,7 @@ else if (gutil.env.appium) {
 gulp.task('webdriver-update', protractor.webdriverUpdate)
 gulp.task('webdriver-standalone', protractor.webdriverStandalone)
 gulp.task('protractor-explorer', gulp.series(
-  function (callback) {
+  function(callback) {
     protractor.protractorExplorer({
       url: require(protractorConfig).config.baseUrl
     }, callback)
@@ -112,14 +112,14 @@ gulp.task('protractor-explorer', gulp.series(
 )
 
 gulp.task('protractor', gulp.series('webdriver-update',
-  function (callback) {
+  function(callback) {
     gulp.src(['./res/test/e2e/**/*.js'])
       .pipe(protractor.protractor({
         configFile: protractorConfig
         , debug: gutil.env.debug
         , suite: gutil.env.suite
       }))
-      .on('error', function (e) {
+      .on('error', function(e) {
         console.log(e)
 
         /* eslint no-console: 0 */
@@ -130,8 +130,8 @@ gulp.task('protractor', gulp.series('webdriver-update',
 
 // For piping strings
 function fromString(filename, string) {
-  var src = new stream.Readable({ objectMode: true })
-  src._read = function () {
+  var src = new stream.Readable({objectMode: true})
+  src._read = function() {
     this.push(new gutil.File({
       cwd: ''
       , base: ''
@@ -145,7 +145,7 @@ function fromString(filename, string) {
 
 
 // For production
-gulp.task('webpack:build', gulp.series(async function (callback) {
+gulp.task('webpack:build', gulp.series(async function(callback) {
   var myConfig = Object.create(webpackConfig)
   myConfig.plugins = myConfig.plugins.concat(
     new webpack.DefinePlugin({
@@ -156,7 +156,7 @@ gulp.task('webpack:build', gulp.series(async function (callback) {
   )
   myConfig.devtool = false
 
-  webpack(myConfig, function (err, stats) {
+  webpack(myConfig, function(err, stats) {
     if (err) {
       throw new gutil.PluginError('webpack:build', err)
     }
@@ -174,7 +174,7 @@ gulp.task('webpack:build', gulp.series(async function (callback) {
   })
 }))
 
-gulp.task('webpack:others', gulp.series(async function (callback) {
+gulp.task('webpack:others', gulp.series(async function(callback) {
   var myConfig = Object.create(webpackStatusConfig)
   myConfig.plugins = myConfig.plugins.concat(
     new webpack.DefinePlugin({
@@ -185,7 +185,7 @@ gulp.task('webpack:others', gulp.series(async function (callback) {
   )
   myConfig.devtool = false
 
-  webpack(myConfig, function (err, stats) {
+  webpack(myConfig, function(err, stats) {
     if (err) {
       throw new gutil.PluginError('webpack:others', err)
     }
@@ -197,7 +197,7 @@ gulp.task('webpack:others', gulp.series(async function (callback) {
   })
 }))
 
-gulp.task('pug', gulp.series(async function () {
+gulp.task('pug', gulp.series(async function() {
   return gulp.src([
     './res/**/*.pug'
     , '!./res/bower_components/**'
@@ -206,7 +206,7 @@ gulp.task('pug', gulp.series(async function () {
       locals: {
         // So res/views/docs.pug doesn't complain
         markdownFile: {
-          parseContent: function () {
+          parseContent: function() {
           }
         }
       }
@@ -214,7 +214,7 @@ gulp.task('pug', gulp.series(async function () {
     .pipe(gulp.dest('./tmp/html/'))
 }))
 
-gulp.task('translate:extract', gulp.series('pug', function () {
+gulp.task('translate:extract', gulp.series('pug', function() {
   return gulp.src([
     './tmp/html/**/*.html'
     , './res/**/*.js'
@@ -225,7 +225,7 @@ gulp.task('translate:extract', gulp.series('pug', function () {
     .pipe(gulp.dest('./res/common/lang/po/'))
 }))
 
-gulp.task('translate:compile', gulp.series(async function () {
+gulp.task('translate:compile', gulp.series(async function() {
   return gulp.src('./res/common/lang/po/**/*.po')
     .pipe(gettext.compile({
       format: 'json'
@@ -233,18 +233,18 @@ gulp.task('translate:compile', gulp.series(async function () {
     .pipe(gulp.dest('./res/common/lang/translations/'))
 }))
 
-gulp.task('translate:push', gulp.series(async function () {
+gulp.task('translate:push', gulp.series(async function() {
   gutil.log('Pushing translation source to Transifex...')
   return run('tx push -s').exec()
 }))
 
-gulp.task('translate:pull', gulp.series(async function () {
+gulp.task('translate:pull', gulp.series(async function() {
   gutil.log('Pulling translations from Transifex...')
   return run('tx pull').exec()
 }))
 
 
-gulp.task('clean', gulp.series(async function (cb) {
+gulp.task('clean', gulp.series(async function(cb) {
   del([
     './tmp'
     , './res/build'

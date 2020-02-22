@@ -23,17 +23,17 @@ module.exports = {
     }
     , stats: {
       colors: true
-    },
-    optimization: {
+    }
+    , optimization: {
       splitChunks: {
         chunks: 'all'
       }
     }
     , resolve: {
       modules: [
-        pathutil.resource('app/components'),
-        'bower_components',
-        'node_modules'
+        pathutil.resource('app/components')
+        , 'bower_components'
+        , 'node_modules'
       ]
       , alias: {
         'angular-bootstrap': 'angular-bootstrap/ui-bootstrap-tpls'
@@ -46,104 +46,104 @@ module.exports = {
     , module: {
       rules: [
         {
-          test: /\.css$/,
-          use: [
-            'style-loader',
-            'css-loader'
+          test: /\.css$/
+          , use: [
+            'style-loader'
+            , 'css-loader'
           ]
-        },
-        {
-          test: /\.scss$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            'sass-loader'
+        }
+        , {
+          test: /\.scss$/
+          , use: [
+            'style-loader'
+            , 'css-loader'
+            , 'sass-loader'
           ]
-        },
-        {
-          test: /\.less$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            'less-loader'
+        }
+        , {
+          test: /\.less$/
+          , use: [
+            'style-loader'
+            , 'css-loader'
+            , 'less-loader'
           ]
-        },
-        {
-          test: /\.(png|jpg|gif)$/i,
-          use: {
-            loader: 'url-loader',
-            options: {
+        }
+        , {
+          test: /\.(png|jpg|gif)$/i
+          , use: {
+            loader: 'url-loader'
+            , options: {
               limit: 1000
             }
           }
-        },
-        {
-          test: /\.(woff|otf|ttf)/,
-          use: {
-            loader: 'url-loader',
-            options: {
-              limit: 1,
-              mimetype: 'application/font-woff'
+        }
+        , {
+          test: /\.(woff|otf|ttf)/
+          , use: {
+            loader: 'url-loader'
+            , options: {
+              limit: 1
+              , mimetype: 'application/font-woff'
             }
           }
-        },
-        {
-          test: /\.svg/,
-          use: {
-            loader: 'url-loader',
-            options: {
-              limit: 1,
-              mimetype: 'image/svg+xml'
+        }
+        , {
+          test: /\.svg/
+          , use: {
+            loader: 'url-loader'
+            , options: {
+              limit: 1
+              , mimetype: 'image/svg+xml'
             }
           }
-        },
-        {
-          test: /\.eot/,
-          use: {
-            loader: 'url-loader',
-            options: {
-              limit: 1,
-              mimetype: 'vnd.ms-fontobject'
+        }
+        , {
+          test: /\.eot/
+          , use: {
+            loader: 'url-loader'
+            , options: {
+              limit: 1
+              , mimetype: 'vnd.ms-fontobject'
             }
           }
-        },
-        {
-          test: /\.(pug|jade)$/,
-          use: {
+        }
+        , {
+          test: /\.(pug|jade)$/
+          , use: {
             loader: 'pug-loader'
           }
-        },
-        {
-          test: /\.html$/,
-          use: {
+        }
+        , {
+          test: /\.html$/
+          , use: {
             loader: 'html-loader'
           }
-        },
-        {
-          test: /angular\.js$/,
-          use: [
+        }
+        , {
+          test: /angular\.js$/
+          , use: [
             {
-              loader: 'exports-loader',
-              options: {
+              loader: 'exports-loader'
+              , options: {
                 angular: 'angular'
               }
             }
           ]
-        },
-        {
-          test: /angular-(cookies|route|touch|animate|growl)\.js$/,
-          use: [
+        }
+        , {
+          test: /angular-(cookies|route|touch|animate|growl)\.js$/
+          , use: [
             {
-              loader: 'imports-loader',
-              options: {
+              loader: 'imports-loader'
+              , options: {
                 angular: 'angular'
               }
             }
           ]
-        },
-        {
-          test: /dialogs\.js$/,
-          use: 'script-loader'
+        }
+        , {
+          test: /dialogs\.js$/
+          , use: 'script-loader'
         }
 
         // TODO: enable when its sane
@@ -162,7 +162,7 @@ module.exports = {
     }
     , plugins: [
       new ProgressPlugin(_.throttle(
-        function (progress, message) {
+        function(progress, message) {
           var msg
           if (message) {
             msg = message
