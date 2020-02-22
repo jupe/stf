@@ -22,7 +22,6 @@ var run = require('gulp-run')
 gulp.task('jsonlint', gulp.series(async function() {
   return gulp.src([
     '.bowerrc'
-    , '.yo-rc.json'
     , '*.json'
   ])
     .pipe(jsonlint())
