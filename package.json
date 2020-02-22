@@ -33,6 +33,7 @@
     "prepublish": "bower install && not-in-install && gulp build || in-install"
   },
   "dependencies": {
+    "@cwasm/jpeg-turbo": "^0.1.2",
     "@slack/client": "^3.5.4",
     "adbkit": "^2.11.1",
     "adbkit-apkreader": "^3.1.1",
@@ -42,7 +43,7 @@
     "basic-auth": "^1.0.3",
     "bluebird": "^2.10.1",
     "body-parser": "^1.13.3",
-    "bufferutil": "^1.2.1",
+    "bufferutil": "^4.0.1",
     "chalk": "~1.1.1",
     "compression": "^1.5.2",
     "cookie-session": "^2.0.0-alpha.1",
@@ -57,7 +58,6 @@
     "hipchatter": "^0.3.1",
     "http-proxy": "^1.11.2",
     "in-publish": "^2.0.0",
-    "jpeg-turbo": "^0.4.0",
     "jws": "^3.1.0",
     "ldapjs": "^1.0.0",
     "lodash": "^4.14.2",
@@ -93,7 +93,6 @@
     "temp": "^0.8.1",
     "transliteration": "^1.1.6",
     "url-join": "1.1.0",
-    "utf-8-validate": "^1.2.1",
     "uuid": "^3.0.0",
     "ws": "^3.0.0",
     "yargs": "^6.6.0",
