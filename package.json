@@ -29,6 +29,7 @@
     "duplicate-arguments-array": false
   },
   "scripts": {
+    "start": "node lib/cli/index.js local",
     "test": "gulp test",
     "build": "gulp build",
     "prepublish": "bower install && not-in-install && gulp build || in-install"
