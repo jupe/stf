@@ -1,7 +1,6 @@
 var _ = require('lodash')
 
 var webpack = require('webpack')
-var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin')
 var ProgressPlugin = require('webpack/lib/ProgressPlugin')
 
 var pathutil = require('./lib/util/pathutil')
@@ -24,15 +23,17 @@ module.exports = {
     }
     , stats: {
       colors: true
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all'
+      }
     }
     , resolve: {
-      root: [
-        pathutil.resource('app/components')
-      ]
-      , modulesDirectories: [
-        'web_modules'
-        , 'bower_components'
-        , 'node_modules'
+      modules: [
+        pathutil.resource('app/components'),
+        'bower_components',
+        'node_modules'
       ]
       , alias: {
         'angular-bootstrap': 'angular-bootstrap/ui-bootstrap-tpls'
@@ -43,57 +44,125 @@ module.exports = {
       }
     }
     , module: {
-      loaders: [
-        {test: /\.css$/, loader: 'style!css'}
-        , {test: /\.scss$/, loader: 'style!css!sass'}
-        , {test: /\.less$/, loader: 'style!css!less'}
-        , {test: /\.json$/, loader: 'json'}
-        , {test: /\.jpg$/, loader: 'url?limit=1000&mimetype=image/jpeg'}
-        , {test: /\.png$/, loader: 'url?limit=1000&mimetype=image/png'}
-        , {test: /\.gif$/, loader: 'url?limit=1000&mimetype=image/gif'}
-        , {test: /\.svg/, loader: 'url?limit=1&mimetype=image/svg+xml'}
-        , {test: /\.woff/, loader: 'url?limit=1&mimetype=application/font-woff'}
-        , {test: /\.otf/, loader: 'url?limit=1&mimetype=application/font-woff'}
-        , {test: /\.ttf/, loader: 'url?limit=1&mimetype=application/font-woff'}
-        , {test: /\.eot/, loader: 'url?limit=1&mimetype=vnd.ms-fontobject'}
-        , {test: /\.pug$/, loader: 'template-html-loader?engine=jade'}
-        , {test: /\.html$/, loader: 'html-loader'}
-        , {test: /angular\.js$/, loader: 'exports?angular'}
-        , {test: /angular-cookies\.js$/, loader: 'imports?angular=angular'}
-        , {test: /angular-route\.js$/, loader: 'imports?angular=angular'}
-        , {test: /angular-touch\.js$/, loader: 'imports?angular=angular'}
-        , {test: /angular-animate\.js$/, loader: 'imports?angular=angular'}
-        , {test: /angular-growl\.js$/, loader: 'imports?angular=angular'}
-        , {test: /dialogs\.js$/, loader: 'script'}
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            'style-loader',
+            'css-loader'
+          ]
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            'style-loader',
+            'css-loader',
+            'sass-loader'
+          ]
+        },
+        {
+          test: /\.less$/,
+          use: [
+            'style-loader',
+            'css-loader',
+            'less-loader'
+          ]
+        },
+        {
+          test: /\.(png|jpg|gif)$/i,
+          use: {
+            loader: 'url-loader',
+            options: {
+              limit: 1000
+            }
+          }
+        },
+        {
+          test: /\.(woff|otf|ttf)/,
+          use: {
+            loader: 'url-loader',
+            options: {
+              limit: 1,
+              mimetype: 'application/font-woff'
+            }
+          }
+        },
+        {
+          test: /\.svg/,
+          use: {
+            loader: 'url-loader',
+            options: {
+              limit: 1,
+              mimetype: 'image/svg+xml'
+            }
+          }
+        },
+        {
+          test: /\.eot/,
+          use: {
+            loader: 'url-loader',
+            options: {
+              limit: 1,
+              mimetype: 'vnd.ms-fontobject'
+            }
+          }
+        },
+        {
+          test: /\.(pug|jade)$/,
+          use: {
+            loader: 'pug-loader'
+          }
+        },
+        {
+          test: /\.html$/,
+          use: {
+            loader: 'html-loader'
+          }
+        },
+        {
+          test: /angular\.js$/,
+          use: [
+            {
+              loader: 'exports-loader',
+              options: {
+                angular: 'angular'
+              }
+            }
+          ]
+        },
+        {
+          test: /angular-(cookies|route|touch|animate|growl)\.js$/,
+          use: [
+            {
+              loader: 'imports-loader',
+              options: {
+                angular: 'angular'
+              }
+            }
+          ]
+        },
+        {
+          test: /dialogs\.js$/,
+          use: 'script-loader'
+        }
+
+        // TODO: enable when its sane
+        // ,
+        // {
+        //    test: /\.js$/,
+        //    exclude: /node_modules|bower_components/,
+        //    enforce: "post",
+        //    use: 'eslint-loader'
+        //  }
+        // ],
       ]
-      // TODO: enable when its sane
-      // preLoaders: [
-      //  {
-      //    test: /\.js$/,
-      //    exclude: /node_modules|bower_components/,
-      //    loader: 'eslint-loader'
-      //  }
-      // ],
-      , noParse: [
-        // pathutil.resource('bower_components')
-      ]
+      // , noParse: [
+      // pathutil.resource('bower_components')
+      // ]
     }
     , plugins: [
-      new webpack.ResolverPlugin(
-        new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(
-          'bower.json'
-          , ['main']
-        )
-      )
-      , new webpack.ResolverPlugin(
-        new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(
-          '.bower.json'
-          , ['main']
-        )
-      )
-      , new CommonsChunkPlugin('entry/commons.entry.js')
-      , new ProgressPlugin(_.throttle(
-        function(progress, message) {
+      new ProgressPlugin(_.throttle(
+        function (progress, message) {
           var msg
           if (message) {
             msg = message
