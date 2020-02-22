@@ -56,7 +56,7 @@ module.exports.config = {
     }))
 
     var fs = require('fs-extra')
-    if (!fs.existsSync(dashboardReportDirectory)) {
+    if (!fs.existsSync(dashboardReportDirectory)) { // eslint-disable-line no-sync
       fs.mkdirs(dashboardReportDirectory)
     }
 

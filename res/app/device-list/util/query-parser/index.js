@@ -46,76 +46,83 @@ QueryParser.prototype.consume = function(input) {
   case State.TERM_START:
     if (this.isWhitespace(input)) {
       // Preceding whitespace, ignore.
-      return
+      break
     }
     this.terms.push(this.currentTerm)
     this.state = State.QUERY_START
-    return this.consume(input)
+    this.consume(input)
+    break
   case State.QUERY_START:
     if (this.isWhitespace(input)) {
       // Preceding whitespace, ignore.
-      return
+      break
     }
     if (input === '<') {
       this.state = State.OP_LT
-      return
+      break
     }
     if (input === '>') {
       this.state = State.OP_GT
-      return
+      break
     }
     this.state = State.QUERY_VALUE_START
-    return this.consume(input)
+    this.consume(input)
+    break
   case State.OP_LT:
     if (input === '=') {
       this.currentTerm.op = '<='
       this.state = State.QUERY_VALUE_START
-      return
+      break
     }
     this.currentTerm.op = '<'
     this.state = State.QUERY_VALUE_START
-    return this.consume(input)
+    this.consume(input)
+    break
   case State.OP_GT:
     if (input === '=') {
       this.currentTerm.op = '>='
       this.state = State.QUERY_VALUE_START
-      return
+      break
     }
     this.currentTerm.op = '>'
     this.state = State.QUERY_VALUE_START
-    return this.consume(input)
+    this.consume(input)
+    break
   case State.QUERY_VALUE_START:
     if (this.isWhitespace(input)) {
       // Preceding whitespace, ignore.
-      return
+      break
     }
     if (input === '"') {
       this.state = State.QUERY_VALUE_DOUBLEQUOTED
-      return
+      break
     }
     this.state = State.QUERY_VALUE
-    return this.consume(input)
+    this.consume(input)
+    break
   case State.QUERY_VALUE:
     if (this.isWhitespace(input)) {
-      return this.concludeTerm()
+      this.concludeTerm()
+      break
     }
     if (input === ':') {
       this.currentTerm.field = this.currentTerm.query
       this.currentTerm.reset()
       this.state = State.QUERY_START
-      return
+      break
     }
     this.currentTerm.append(input)
-    return
+    break
   case State.QUERY_VALUE_DOUBLEQUOTED:
     if (input === '\\') {
-      return
+      break
     }
     if (input === '"') {
-      return this.concludeTerm()
+      this.concludeTerm()
+      break
     }
     this.currentTerm.append(input)
-    return
+    break
   }
 }
 
