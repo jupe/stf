@@ -155,7 +155,7 @@
     "style-loader": "^0.13.0",
     "template-html-loader": "^0.0.3",
     "then-jade": "^2.4.4",
-    "url-loader": "^3.0.0",
+    "url-loader": "^0.5.9",
     "webpack": "^4.41.6",
     "webpack-dev-server": "^3.1.11"
   },

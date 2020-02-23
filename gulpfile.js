@@ -156,7 +156,7 @@ gulp.task('webpack:build', gulp.series(async function(callback) {
   myConfig.devtool = false
   myConfig.mode = 'production'
 
-  webpack(myConfig, function(err, stats) {
+  webpack(webpackConfig, function(err, stats) {
     if (err) {
       throw new gutil.PluginError('webpack:build', err)
     }
