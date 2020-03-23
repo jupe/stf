@@ -6,7 +6,7 @@ var jsonlint = require('gulp-jsonlint')
 var eslint = require('gulp-eslint')
 var EslintCLIEngine = require('eslint').CLIEngine
 var webpack = require('webpack')
-var webpackConfig = require('./webpack.config').webpack
+var webpackConfig = require('./webpack.config')
 var webpackStatusConfig = require('./res/common/status/webpack.config')
 var gettext = require('gulp-angular-gettext')
 var pug = require('gulp-pug')
@@ -146,7 +146,7 @@ function fromString(filename, string) {
 
 // For production
 gulp.task('webpack:build', gulp.series(async function (callback) {
-  var myConfig = Object.create(webpackConfig)
+  var myConfig = webpackConfig
   myConfig.plugins = myConfig.plugins.concat(
     new webpack.DefinePlugin({
       'process.env': {
