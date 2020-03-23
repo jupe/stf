@@ -7,7 +7,8 @@ var pathutil = require('./lib/util/pathutil')
 var log = require('./lib/util/logger').createLogger('webpack:config')
 
 module.exports = {
-  context: path.resolve(__dirname)
+  mode: 'production'
+  , context: path.resolve(__dirname)
   , cache: true
   , entry: {
     app: pathutil.resource('./app/app.js')
@@ -28,131 +29,122 @@ module.exports = {
     }
   }
   , resolve: {
-    modules: ['./app/components', './res/bower_components', './node_modules']
-    , descriptionFiles: ['./bower.json', './package.json']
+    modules: ['bower_components', 'node_modules', 'web_modules']
+    , descriptionFiles: ['bower.json', 'package.json']
     , extensions: ['.js', '.json', '.html']
     , alias: {
-      'angular-bootstrap': 'angular-bootstrap/ui-bootstrap-tpls'
+      'ui-bootstrap': 'angular-bootstrap/ui-bootstrap-tpls'
       , localforage: 'localforage/dist/localforage.js'
       , 'socket.io': 'socket.io-client'
       , stats: 'stats.js/src/Stats.js'
       , 'underscore.string': 'underscore.string/index'
-      , node_modules: path.join(__dirname, 'node_modules')
-      , bower_modules: path.join(__dirname, 'res/bower_modules')
+      , stf: path.resolve(__dirname, './res/app/components/stf')
+      , gettext: 'angular-gettext'
+
     }
   }
   , module: {
     rules: [
       {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
+        test: /\.css$/
+        , use: [
+          'style-loader'
+          , 'css-loader'
         ]
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader'
+      }
+      , {
+        test: /\.scss$/
+        , use: [
+          'style-loader'
+          , 'css-loader'
+          , 'sass-loader'
         ]
-      },
-      {
-        test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'less-loader'
+      }
+      , {
+        test: /\.less$/
+        , use: [
+          'style-loader'
+          , 'css-loader'
+          , 'less-loader'
         ]
-      },
-      {
-        test: /\.(png|jpg|gif)$/i,
-        use: {
-          loader: 'url-loader',
-          options: {
+      }
+      , {
+        test: /\.(png|jpg|gif)$/i
+        , use: {
+          loader: 'url-loader'
+          , options: {
             limit: 1000
           }
         }
-      },
-      {
-        test: /\.(woff|otf|ttf)/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 1,
-            mimetype: 'application/font-woff'
+      }
+      , {
+        test: /\.(woff|otf|ttf)/
+        , use: {
+          loader: 'url-loader'
+          , options: {
+            limit: 1
+            , mimetype: 'application/font-woff'
           }
         }
-      },
-      {
-        test: /\.svg/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 1,
-            mimetype: 'image/svg+xml'
+      }
+      , {
+        test: /\.svg/
+        , use: {
+          loader: 'url-loader'
+          , options: {
+            limit: 1
+            , mimetype: 'image/svg+xml'
           }
         }
-      },
-      {
-        test: /\.eot/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 1,
-            mimetype: 'vnd.ms-fontobject'
+      }
+      , {
+        test: /\.eot/
+        , use: {
+          loader: 'url-loader'
+          , options: {
+            limit: 1
+            , mimetype: 'vnd.ms-fontobject'
           }
         }
-      },
-      {
-        test: /\.(pug|jade)$/,
-        use: {
+      }
+      , {
+        test: /\.(pug|jade)$/
+        , use: {
           loader: 'pug-loader'
         }
-      },
-      {
-        test: /\.html$/,
-        use: {
+      }
+      , {
+        test: /\.html$/
+        , use: {
           loader: 'html-loader'
         }
-      },
-      {
-        test: /angular\.js$/,
-        use: [
-          {
-            loader: 'exports-loader',
-            options: {
-              angular: 'angular'
-            }
-          }
-        ]
-      },
-      {
-        test: /angular-(cookies|route|touch|animate|growl)\.js$/,
-        use: [
-          {
-            loader: 'imports-loader',
-            options: {
-              angular: 'angular'
-            }
-          }
-        ]
-      },
-      {
-        test: /dialogs\.js$/,
-        use: 'script-loader'
       }
-
-      // TODO: enable when its sane
-      // ,
-      // {
-      //    test: /\.js$/,
-      //    exclude: /node_modules|bower_components/,
-      //    enforce: "post",
-      //    use: 'eslint-loader'
-      //  }
-      // ],
+      , {
+        test: /angular\.js$/
+        , use: [
+          {
+            loader: 'exports-loader'
+            , options: {
+              angular: 'angular'
+            }
+          }
+        ]
+      }
+      , {
+        test: /angular-(cookies|route|touch|animate|growl)\.js$/
+        , use: [
+          {
+            loader: 'imports-loader'
+            , options: {
+              angular: 'angular'
+            }
+          }
+        ]
+      }
+      , {
+        test: /dialogs\.js$/
+        , use: 'script-loader'
+      }
     ]
     // , noParse: [
     // pathutil.resource('bower_components')
@@ -160,7 +152,7 @@ module.exports = {
   }
   , plugins: [
     new ProgressPlugin(_.throttle(
-      function (progress, message) {
+      (progress, message) => {
         var msg
         if (message) {
           msg = message
@@ -172,9 +164,9 @@ module.exports = {
       }
       , 1000
     ))
-  ],
-  resolveLoader: {
-    modules: ['./node_modules'],
-    extensions: ['.js', '.json'],
+  ]
+  , resolveLoader: {
+    modules: ['./node_modules']
+    , extensions: ['.js', '.json'],
   }
 }
