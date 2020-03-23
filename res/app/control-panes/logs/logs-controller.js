@@ -116,7 +116,7 @@ module.exports = function LogsCtrl($scope, $rootScope, $routeParams, LogcatServi
   $scope.clear = function() {
     var deviceSerial = (window.location.href).split('/').pop()
     if (Object.keys(LogcatService.deviceEntries).includes(deviceSerial)) {
-      for (var i = LogcatService.deviceSerial.length - 1; i >= 0; i++) {
+      for (var i = LogcatService.deviceSerial.length - 1; i >= 0; i--) {
         if (LogcatService.deviceSerial[i] === deviceSerial) {
           LogcatService.deviceSerial.splice(i, 1)
         }
