@@ -13,6 +13,7 @@ addons:
     - graphicsmagick
     - g++-4.9
     - yasm
+  rethinkdb: '2.3.6'
 env:
   matrix:
   - NODE_VERSION=8.16.1
