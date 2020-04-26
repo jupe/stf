@@ -38,11 +38,15 @@ install:
 
 script:
 - sudo service rethinkdb stop
-- sudo service rethinkdb status
 - sudo service rethinkdb start
 - npm test
 - npm run build
+# Local STF tests
 - npm run ci
+# Unit Frontend
+- if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install phantomjs; fi
+- if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install phantomjs; fi
+- gulp karma
 
 cache:
   directories:
