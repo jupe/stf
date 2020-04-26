@@ -580,7 +580,7 @@ module.exports = function GroupsCtrl(
         .then(function(response) {
           if (!response.success &&
               response.status === 409 &&
-              response.data.hasOwnProperty('conflicts')) {
+            Object.hasOwnProperty.call(response.data, 'conflicts')) {
             $scope.groupsEnv[group.id].showConflicts = true
             $scope.groupsEnv[group.id].conflicts = response.data.conflicts
           }
@@ -711,7 +711,7 @@ module.exports = function GroupsCtrl(
     .then(function(response) {
       if (!response.success &&
           response.status === 409 &&
-          response.data.hasOwnProperty('conflicts')) {
+        Object.hasOwnProperty.call(response.data, 'conflicts')) {
         $scope.groupsEnv[group.id].conflicts = []
         response.data.conflicts.forEach(function(conflict) {
           conflict.devices.forEach(function(serial) {

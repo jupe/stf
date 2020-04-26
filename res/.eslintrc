@@ -21,8 +21,8 @@
     "operator-linebreak": 0
   },
   "globals": {
-    "angular": 1,
-    "inject": 1,
-    "waitUrl": 1
+    "angular": "writable",
+    "inject": "writable",
+    "waitUrl": "writable"
   }
 }

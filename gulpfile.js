@@ -6,7 +6,7 @@ var jsonlint = require('gulp-jsonlint')
 var eslint = require('gulp-eslint')
 var EslintCLIEngine = require('eslint').CLIEngine
 var webpack = require('webpack')
-var webpackConfig = require('./webpack.config').webpack
+var webpackConfig = require('./webpack.config')
 var webpackStatusConfig = require('./res/common/status/webpack.config')
 var gettext = require('gulp-angular-gettext')
 var pug = require('gulp-pug')
@@ -18,6 +18,7 @@ var karma = require('karma').server
 var karmaConfig = '/res/test/karma.conf.js'
 var stream = require('stream')
 var run = require('gulp-run')
+
 
 gulp.task('jsonlint', gulp.series(async function() {
   return gulp.src([
@@ -145,7 +146,7 @@ function fromString(filename, string) {
 
 // For production
 gulp.task('webpack:build', gulp.series(async function(callback) {
-  var myConfig = Object.create(webpackConfig)
+  var myConfig = webpackConfig
   myConfig.plugins = myConfig.plugins.concat(
     new webpack.DefinePlugin({
       'process.env': {
@@ -156,7 +157,7 @@ gulp.task('webpack:build', gulp.series(async function(callback) {
   myConfig.devtool = false
   myConfig.mode = 'production'
 
-  webpack(webpackConfig, function(err, stats) {
+  webpack(myConfig, function(err, stats) {
     if (err) {
       throw new gutil.PluginError('webpack:build', err)
     }
