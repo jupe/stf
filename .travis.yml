@@ -13,6 +13,7 @@ addons:
     - graphicsmagick
     - g++-4.9
     - yasm
+    - android-sdk-platform-tools
   rethinkdb: '2.3.6'
 env:
   matrix:
