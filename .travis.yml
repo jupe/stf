@@ -36,6 +36,7 @@ install:
 - export PATH=$PWD/node_modules/.bin:$PATH
 
 script:
+- sudo service rethinkdb stop
 - sudo service rethinkdb status
 - sudo service rethinkdb start
 - npm test
