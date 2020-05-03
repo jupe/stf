@@ -14,7 +14,7 @@ var del = require('del')
 // var protractor = require('gulp-protractor')
 var protractor = require('./res/test/e2e/helpers/gulp-protractor-adv')
 var protractorConfig = './res/test/protractor.conf'
-var karma = require('karma').server
+var {Server} = require('karma')
 var karmaConfig = '/res/test/karma.conf.js'
 var stream = require('stream')
 var run = require('gulp-run')
@@ -82,16 +82,19 @@ gulp.task('run:checkversion', gulp.series(async function() {
 }))
 
 gulp.task('karma_ci', gulp.series(async function(done) {
-  karma.start({
+  const server = new Server({
     configFile: path.join(__dirname, karmaConfig)
     , singleRun: true
   }, done)
+  server.start()
 }))
 
 gulp.task('karma', gulp.series(async function(done) {
-  karma.start({
+  const server = new Server({
     configFile: path.join(__dirname, karmaConfig)
+    , singleRun: true
   }, done)
+  server.start()
 }))
 
 if (gutil.env.multi) {
