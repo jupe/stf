@@ -31,6 +31,7 @@
   "scripts": {
     "start": "node lib/cli/index.js local",
     "test": "gulp test",
+    "test-ui": "gulp karma",
     "build": "gulp build",
     "prepublish": "bower install && not-in-install && gulp build || in-install",
     "ci": "start-server-and-test start http://localhost:7100 gulp protractor",

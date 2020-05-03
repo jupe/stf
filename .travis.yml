@@ -32,22 +32,21 @@ before_install:
 - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then export CXX=g++-4.9; fi
 - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install rethinkdb graphicsmagick
   zeromq yasm pkg-config; fi
+- if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install phantomjs; fi
+- if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install phantomjs; fi
 install:
 - npm install
 - export PATH=$PWD/node_modules/.bin:$PATH
-
-script:
+before_script:
 - sudo service rethinkdb stop
 - sudo service rethinkdb start
+script:
 - npm test
 - npm run build
 # Local STF tests
 - npm run ci
 # Unit Frontend
-- if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install phantomjs; fi
-- if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install phantomjs; fi
-- gulp karma
-
+- npm run test-ui
 cache:
   directories:
   - node_modules
