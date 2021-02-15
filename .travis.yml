@@ -13,12 +13,14 @@ addons:
     - graphicsmagick
     - g++-4.9
     - yasm
+    - android-sdk-platform-tools
+    - google-chrome-stable
+  rethinkdb: '2.3.6'
 env:
   matrix:
   - NODE_VERSION=8.16.1
+  - NODE_VERSION=12
 matrix:
-  allow_failures:
-  - os: osx
   fast_finish: true
 before_install:
 - rm -rf ~/.nvm && git clone --depth 1 https://github.com/creationix/nvm.git ~/.nvm
@@ -30,15 +32,25 @@ before_install:
 - npm set progress=false
 - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then export CXX=g++-4.9; fi
 - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install rethinkdb graphicsmagick
-  zeromq protobuf yasm pkg-config; fi
+  zeromq yasm pkg-config; fi
+- if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install phantomjs; fi
+- if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install phantomjs; fi
 install:
 - npm install
 - export PATH=$PWD/node_modules/.bin:$PATH
-
+before_script:
+- sudo service rethinkdb stop
+- sudo service rethinkdb start
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start &
+- sleep 3
 script:
 - npm test
-- gulp build
-
+- npm run build
+# Local STF tests
+- npm run ci
+# Unit Frontend
+- npm run test-ui
 cache:
   directories:
   - node_modules

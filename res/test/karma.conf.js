@@ -22,16 +22,8 @@ module.exports = function(config) {
 //    webpack: webpackConfig.webpack,
     webpack: {
       cache: true,
-      module: webpackConfig.webpack.module,
-      resolve: webpackConfig.webpack.resolve,
-      plugins: [
-        new webpack.ResolverPlugin(
-          new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(
-            'bower.json'
-            , ['main']
-          )
-        )
-      ]
+      module: webpackConfig.module,
+      resolve: webpackConfig.resolve
     },
     webpackServer: {
       debug: true,
@@ -62,7 +54,8 @@ module.exports = function(config) {
 
     // Start these browsers, currently available:
     // Chrome, ChromeCanary, Firefox, Opera, Safari, PhantomJS, IE
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'],
+    //browsers: ['Chrome'],
     //browsers: ['PhantomJS'],
 
     plugins: [

@@ -6,7 +6,7 @@ var jsonlint = require('gulp-jsonlint')
 var eslint = require('gulp-eslint')
 var EslintCLIEngine = require('eslint').CLIEngine
 var webpack = require('webpack')
-var webpackConfig = require('./webpack.config').webpack
+var webpackConfig = require('./webpack.config')
 var webpackStatusConfig = require('./res/common/status/webpack.config')
 var gettext = require('gulp-angular-gettext')
 var pug = require('gulp-pug')
@@ -14,26 +14,26 @@ var del = require('del')
 // var protractor = require('gulp-protractor')
 var protractor = require('./res/test/e2e/helpers/gulp-protractor-adv')
 var protractorConfig = './res/test/protractor.conf'
-var karma = require('karma').server
+var {Server} = require('karma')
 var karmaConfig = '/res/test/karma.conf.js'
 var stream = require('stream')
 var run = require('gulp-run')
 
-gulp.task('jsonlint', function() {
+
+gulp.task('jsonlint', gulp.series(async function() {
   return gulp.src([
-      '.bowerrc'
-    , '.yo-rc.json'
+    '.bowerrc'
     , '*.json'
-    ])
+  ])
     .pipe(jsonlint())
     .pipe(jsonlint.reporter())
-})
+}))
 
 // Try to use eslint-cli directly instead of eslint-gulp
 // since it doesn't support cache yet
-gulp.task('eslint', function() {
+gulp.task('eslint', gulp.series(async function() {
   return gulp.src([
-      'lib/**/*.js'
+    'lib/**/*.js'
     , 'res/**/*.js'
     , '!res/bower_components/**'
     , '*.js'
@@ -47,12 +47,12 @@ gulp.task('eslint', function() {
     // To have the process exit with an error code (1) on
     // lint error, return the stream and pipe to failAfterError last.
     .pipe(eslint.failAfterError())
-})
+}))
 
-gulp.task('eslint-cli', function(done) {
+gulp.task('eslint-cli', gulp.series(async function(done) {
   var cli = new EslintCLIEngine({
     cache: true
-  , fix: false
+    , fix: false
   })
 
   var report = cli.executeOnFiles([
@@ -73,30 +73,29 @@ gulp.task('eslint-cli', function(done) {
   else {
     done()
   }
-})
+}))
 
 
-gulp.task('lint', ['jsonlint', 'eslint-cli'])
-gulp.task('test', ['lint', 'run:checkversion'])
-gulp.task('build', ['clean', 'webpack:build'])
-
-gulp.task('run:checkversion', function() {
+gulp.task('run:checkversion', gulp.series(async function() {
   gutil.log('Checking STF version...')
   return run('./bin/stf -V').exec()
-})
+}))
 
-gulp.task('karma_ci', function(done) {
-  karma.start({
+gulp.task('karma_ci', gulp.series(async function(done) {
+  const server = new Server({
     configFile: path.join(__dirname, karmaConfig)
-  , singleRun: true
+    , singleRun: true
   }, done)
-})
+  server.start()
+}))
 
-gulp.task('karma', function(done) {
-  karma.start({
+gulp.task('karma', gulp.series(async function(done) {
+  const server = new Server({
     configFile: path.join(__dirname, karmaConfig)
+    , singleRun: true
   }, done)
-})
+  server.start()
+}))
 
 if (gutil.env.multi) {
   protractorConfig = './res/test/protractor-multi.conf'
@@ -107,26 +106,30 @@ else if (gutil.env.appium) {
 
 gulp.task('webdriver-update', protractor.webdriverUpdate)
 gulp.task('webdriver-standalone', protractor.webdriverStandalone)
-gulp.task('protractor-explorer', function(callback) {
-  protractor.protractorExplorer({
-    url: require(protractorConfig).config.baseUrl
-  }, callback)
-})
+gulp.task('protractor-explorer', gulp.series(
+  function(callback) {
+    protractor.protractorExplorer({
+      url: require(protractorConfig).config.baseUrl
+    }, callback)
+  })
+)
 
-gulp.task('protractor', ['webdriver-update'], function(callback) {
-  gulp.src(['./res/test/e2e/**/*.js'])
-    .pipe(protractor.protractor({
-      configFile: protractorConfig
-    , debug: gutil.env.debug
-    , suite: gutil.env.suite
-    }))
-    .on('error', function(e) {
-      console.log(e)
+gulp.task('protractor', gulp.series('webdriver-update',
+  function(callback) {
+    gulp.src(['./res/test/e2e/**/*.js'])
+      .pipe(protractor.protractor({
+        configFile: protractorConfig
+        , debug: gutil.env.debug
+        , suite: gutil.env.suite
+      }))
+      .on('error', function(e) {
+        console.log(e)
 
-      /* eslint no-console: 0 */
-    })
-    .on('end', callback)
-})
+        /* eslint no-console: 0 */
+      })
+      .on('end', callback)
+  })
+)
 
 // For piping strings
 function fromString(filename, string) {
@@ -134,9 +137,9 @@ function fromString(filename, string) {
   src._read = function() {
     this.push(new gutil.File({
       cwd: ''
-    , base: ''
-    , path: filename
-    , contents: new Buffer(string)
+      , base: ''
+      , path: filename
+      , contents: Buffer.from(string)
     }))
     this.push(null)
   }
@@ -145,8 +148,8 @@ function fromString(filename, string) {
 
 
 // For production
-gulp.task('webpack:build', function(callback) {
-  var myConfig = Object.create(webpackConfig)
+gulp.task('webpack:build', gulp.series(async function(callback) {
+  var myConfig = webpackConfig
   myConfig.plugins = myConfig.plugins.concat(
     new webpack.DefinePlugin({
       'process.env': {
@@ -172,9 +175,9 @@ gulp.task('webpack:build', function(callback) {
 
     callback()
   })
-})
+}))
 
-gulp.task('webpack:others', function(callback) {
+gulp.task('webpack:others', gulp.series(async function(callback) {
   var myConfig = Object.create(webpackStatusConfig)
   myConfig.plugins = myConfig.plugins.concat(
     new webpack.DefinePlugin({
@@ -195,20 +198,13 @@ gulp.task('webpack:others', function(callback) {
     }))
     callback()
   })
-})
+}))
 
-gulp.task('translate', [
-  'translate:extract'
-, 'translate:push'
-, 'translate:pull'
-, 'translate:compile'
-])
-
-gulp.task('pug', function() {
+gulp.task('pug', gulp.series(async function() {
   return gulp.src([
-      './res/**/*.pug'
+    './res/**/*.pug'
     , '!./res/bower_components/**'
-    ])
+  ])
     .pipe(pug({
       locals: {
         // So res/views/docs.pug doesn't complain
@@ -219,41 +215,53 @@ gulp.task('pug', function() {
       }
     }))
     .pipe(gulp.dest('./tmp/html/'))
-})
+}))
 
-gulp.task('translate:extract', ['pug'], function() {
+gulp.task('translate:extract', gulp.series('pug', function() {
   return gulp.src([
-      './tmp/html/**/*.html'
+    './tmp/html/**/*.html'
     , './res/**/*.js'
     , '!./res/bower_components/**'
     , '!./res/build/**'
-    ])
+  ])
     .pipe(gettext.extract('stf.pot'))
     .pipe(gulp.dest('./res/common/lang/po/'))
-})
+}))
 
-gulp.task('translate:compile', function() {
+gulp.task('translate:compile', gulp.series(async function() {
   return gulp.src('./res/common/lang/po/**/*.po')
     .pipe(gettext.compile({
       format: 'json'
     }))
     .pipe(gulp.dest('./res/common/lang/translations/'))
-})
+}))
 
-gulp.task('translate:push', function() {
+gulp.task('translate:push', gulp.series(async function() {
   gutil.log('Pushing translation source to Transifex...')
   return run('tx push -s').exec()
-})
+}))
 
-gulp.task('translate:pull', function() {
+gulp.task('translate:pull', gulp.series(async function() {
   gutil.log('Pulling translations from Transifex...')
   return run('tx pull').exec()
-})
+}))
 
-gulp.task('clean', function(cb) {
+
+gulp.task('clean', gulp.series(async function(cb) {
   del([
     './tmp'
     , './res/build'
     , '.eslintcache'
   ], cb)
-})
+}))
+
+gulp.task('translate', gulp.series([
+  'translate:extract'
+  , 'translate:push'
+  , 'translate:pull'
+  , 'translate:compile'
+]))
+
+gulp.task('lint', gulp.series(['jsonlint', 'eslint-cli']))
+gulp.task('test', gulp.series(['lint', 'run:checkversion']))
+gulp.task('build', gulp.series(['clean', 'webpack:build']))
