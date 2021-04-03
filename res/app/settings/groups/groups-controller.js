@@ -40,7 +40,8 @@ module.exports = function GroupsCtrl(
     'marketName,' +
     'phone.imei,' +
     'provider.name,' +
-    'group.originName'
+    'group.originName,' +
+    'notes'
   const userFields =
     'email,' +
     'name,' +
@@ -389,6 +390,7 @@ module.exports = function GroupsCtrl(
   , {name: 'Phone IMEI', property: 'phone.imei'}
   , {name: 'Location', property: 'provider.name'}
   , {name: 'Group Origin', property: 'group.originName'}
+  , {name: 'Notes', property: 'notes'}
   ]
   $scope.defaultDeviceData = {
     columns: [
@@ -407,6 +409,7 @@ module.exports = function GroupsCtrl(
     , {name: 'Phone IMEI', selected: false, sort: 'none'}
     , {name: 'Location', selected: true, sort: 'none'}
     , {name: 'Group Origin', selected: true, sort: 'none'}
+    , {name: 'Notes', selected: false, sort: 'none'}
     ]
   , sort: {index: 0, reverse: false}
   }
